@@ -659,7 +659,7 @@ Phương thức thanh toán: ${payment}
     `;
 
     // Gửi email qua FormSubmit
-    fetch('https://formsubmit.co/ajax/datcoi2002hy@gmail.com', {
+    fetch('https://formsubmit.co/ajax/nguyenvanson2003hy@gmail.com', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',

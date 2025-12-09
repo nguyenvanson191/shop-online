@@ -66,8 +66,8 @@ Xem file `HUONG_DAN_DEPLOY.md` để biết cách deploy miễn phí lên:
 
 ## 📞 Liên hệ
 
-- **SĐT:** 0836011168
-- **Email:** datcoi2002hy@gmail.com
+- **SĐT:** 0762294585
+- **Email:** nguyenvanson2003hy@gmail.com
 - **Địa chỉ:** H2 Haven Ecopark, Hà Nội
 
 ## 📝 Ghi chú
