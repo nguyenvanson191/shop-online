@@ -620,32 +620,104 @@ function placeOrder() {
         notes: document.getElementById('notes')?.value || ''
     };
 
-    // Lưu đơn hàng vào danh sách đơn hàng
-    const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
-    allOrders.push(orderData);
-    localStorage.setItem('allOrders', JSON.stringify(allOrders));
-
-    // Lưu đơn hàng cuối cùng (để hiển thị trong checkout)
-    localStorage.setItem('lastOrder', JSON.stringify(orderData));
-
-    // Hiển thị thông báo thành công
-    const message = `
-        <div style="padding: 2rem; text-align: center;">
-            <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;"></i>
-            <h2>Đặt hàng thành công!</h2>
-            <p style="margin: 1rem 0;">Mã đơn hàng: <strong>#${Date.now()}</strong></p>
-            <p>Tổng tiền: <strong>${formatPrice(total)}</strong></p>
-            <p style="margin-top: 1rem; color: var(--gray-color);">Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
-            <a href="index.html" class="btn btn-primary" style="margin-top: 2rem; text-decoration: none; display: inline-block;">Tiếp tục mua sắm</a>
+    // Hiển thị thông báo đang xử lý
+    const checkoutContainer = document.querySelector('.checkout-container');
+    const originalContent = checkoutContainer.innerHTML;
+    checkoutContainer.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h3 style="margin-top: 1rem;">Đang xử lý đơn hàng...</h3>
+            <p>Vui lòng đợi trong giây lát, chúng tôi đang gửi đơn hàng của bạn.</p>
         </div>
     `;
 
-    document.querySelector('.checkout-section').innerHTML = `<div class="container">${message}</div>`;
+    // Chuẩn bị nội dung email
+    const orderDetails = cart.map(item => 
+        `- ${item.name} (x${item.quantity}): ${formatPrice(item.price * item.quantity)}`
+    ).join('\n');
 
-    // Xóa giỏ hàng
-    cart = [];
-    saveCart();
-    updateCartCount();
+    const emailBody = `
+MÃ ĐƠN HÀNG: #${orderId}
+--------------------------------
+KHÁCH HÀNG:
+Họ tên: ${fullName}
+SĐT: ${phone}
+Địa chỉ: ${street}, ${ward}, ${district}, ${province}
+Ghi chú: ${document.getElementById('notes')?.value || 'Không có'}
+
+--------------------------------
+ĐƠN HÀNG:
+${orderDetails}
+
+--------------------------------
+TỔNG THANH TOÁN:
+Tạm tính: ${formatPrice(subtotal)}
+Phí vận chuyển: ${formatPrice(shipping)}
+Giảm giá: -${formatPrice(discount)}
+TỔNG CỘNG: ${formatPrice(total)}
+Phương thức thanh toán: ${payment}
+    `;
+
+    // Gửi email qua FormSubmit
+    fetch('https://formsubmit.co/ajax/datcoi2002hy@gmail.com', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            _subject: `Đơn hàng mới #${orderId} - ${fullName}`,
+            _template: 'table', // Sử dụng template bảng đẹp mắt
+            Mã_đơn: orderId,
+            Khách_hàng: fullName,
+            SĐT: phone,
+            Địa_chỉ: `${street}, ${ward}, ${district}, ${province}`,
+            Sản_phẩm: orderDetails,
+            Tổng_tiền: formatPrice(total),
+            Chi_tiết: emailBody // Gửi kèm chi tiết dạng text
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Lưu đơn hàng vào localStorage (cho Admin test)
+        const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
+        allOrders.push(orderData);
+        localStorage.setItem('allOrders', JSON.stringify(allOrders));
+        localStorage.setItem('lastOrder', JSON.stringify(orderData));
+
+        // Hiển thị thông báo thành công
+        const message = `
+            <div style="padding: 2rem; text-align: center;">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;"></i>
+                <h2>Đặt hàng thành công!</h2>
+                <p style="margin: 1rem 0;">Mã đơn hàng: <strong>#${orderId}</strong></p>
+                <p>Tổng tiền: <strong>${formatPrice(total)}</strong></p>
+                <p style="margin-top: 1rem; color: var(--gray-color);">Thông báo đơn hàng đã được gửi đến hệ thống.</p>
+                <p>Chúng tôi sẽ liên hệ với bạn qua SĐT <strong>${phone}</strong> trong thời gian sớm nhất.</p>
+                <a href="index.html" class="btn btn-primary" style="margin-top: 2rem; text-decoration: none; display: inline-block;">Tiếp tục mua sắm</a>
+            </div>
+        `;
+        document.querySelector('.checkout-section').innerHTML = `<div class="container">${message}</div>`;
+
+        // Xóa giỏ hàng
+        cart = [];
+        saveCart();
+        updateCartCount();
+    })
+    .catch(error => {
+        console.error('Lỗi gửi email:', error);
+        // Nếu lỗi gửi email, vẫn báo thành công cho khách nhưng lưu log (hoặc thông báo lỗi tùy chọn)
+        // Ở đây ta fallback về hiển thị thành công nhưng cảnh báo
+        alert('Đã ghi nhận đơn hàng nhưng có lỗi khi gửi thông báo. Vui lòng liên hệ hotline để xác nhận.');
+        
+        // Vẫn lưu vào localStorage để không mất đơn
+        const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
+        allOrders.push(orderData);
+        localStorage.setItem('allOrders', JSON.stringify(allOrders));
+        
+        // Quay lại trang cũ
+        checkoutContainer.innerHTML = originalContent;
+    });
 }
 
 // Thêm CSS cho animation
