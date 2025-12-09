@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Đơn hàng - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div>
+            <h1><i class="fas fa-file-invoice"></i> Chi tiết Đơn hàng</h1>
+        </div>
+        <div>
+            <a href="admin-orders.html" class="btn btn-secondary" style="margin-right: 1rem;">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button class="btn btn-danger" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+        </div>
+    </header>
+
+    <div class="admin-content">
+        <div id="orderDetailContent">
+            <!-- Sẽ được load bằng JavaScript -->
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+    <script>
+        if (!checkAdminLogin()) return;
+
+        // Lấy ID đơn hàng từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+        
+        if (!orderId) {
+            window.location.href = 'admin-orders.html';
+            return;
+        }
+
+        // Load chi tiết đơn hàng
+        const order = getOrderById(orderId);
+        
+        if (!order) {
+            document.getElementById('orderDetailContent').innerHTML = `
+                <div class="admin-section">
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Không tìm thấy đơn hàng</h3>
+                        <a href="admin-orders.html" class="btn btn-primary">Quay lại danh sách</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Hiển thị chi tiết đơn hàng
+        renderOrderDetail(order);
+
+        function renderOrderDetail(order) {
+            const address = `${order.customer.street}, ${order.customer.ward}, ${order.customer.district}, ${order.customer.province}`;
+            const paymentMethods = {
+                'cod': 'Thanh toán khi nhận hàng (COD)',
+                'bank': 'Chuyển khoản ngân hàng',
+                'momo': 'Ví điện tử MoMo',
+                'vnpay': 'VNPay'
+            };
+
+            document.getElementById('orderDetailContent').innerHTML = `
+                <div class="admin-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2>Đơn hàng #${order.id}</h2>
+                        <div>
+                            <label><strong>Trạng thái:</strong></label>
+                            <select id="orderStatus" onchange="updateOrderStatusHandler()" style="padding: 0.5rem; margin-left: 0.5rem; border: 2px solid var(--border-color); border-radius: 5px;">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
+                                <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                                <option value="shipping" ${order.status === 'shipping' ? 'selected' : ''}>Đang giao</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Đã giao</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary-color);"><i class="fas fa-user"></i> Thông tin khách hàng</h3>
+                            <table style="width: 100%;">
+                                <tr><td><strong>Họ tên:</strong></td><td>${order.customer.fullName}</td></tr>
+                                <tr><td><strong>SĐT:</strong></td><td>${order.customer.phone}</td></tr>
+                                <tr><td><strong>Địa chỉ:</strong></td><td>${address}</td></tr>
+                            </table>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary-color);"><i class="fas fa-info-circle"></i> Thông tin đơn hàng</h3>
+                            <table style="width: 100%;">
+                                <tr><td><strong>Ngày đặt:</strong></td><td>${formatDate(order.date)}</td></tr>
+                                <tr><td><strong>Thanh toán:</strong></td><td>${paymentMethods[order.payment] || order.payment}</td></tr>
+                                <tr><td><strong>Ghi chú:</strong></td><td>${order.notes || 'Không có'}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-color);"><i class="fas fa-shopping-bag"></i> Sản phẩm</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ảnh</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${order.items.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                                ${item.imageUrl ? `<img src="${item.imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" onerror="this.parentElement.innerHTML='${item.image}';">` : item.image}
+                                            </div>
+                                        </td>
+                                        <td><strong>${item.name}</strong><br><small>${item.description}</small></td>
+                                        <td>${formatPrice(item.price)}</td>
+                                        <td>${item.quantity}</td>
+                                        <td><strong>${formatPrice(item.price * item.quantity)}</strong></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: right; padding: 1.5rem; background: var(--light-color); border-radius: 10px;">
+                        <table style="width: 300px; margin-left: auto;">
+                            <tr><td>Tạm tính:</td><td style="text-align: right;">${formatPrice(order.totals.subtotal)}</td></tr>
+                            ${order.totals.discount > 0 ? `<tr><td>Giảm giá:</td><td style="text-align: right; color: var(--success-color);">-${formatPrice(order.totals.discount)}</td></tr>` : ''}
+                            <tr><td>Phí vận chuyển:</td><td style="text-align: right;">${order.totals.shipping === 0 ? 'Miễn phí' : formatPrice(order.totals.shipping)}</td></tr>
+                            <tr style="border-top: 2px solid var(--border-color); padding-top: 0.5rem;">
+                                <td><strong>Tổng cộng:</strong></td>
+                                <td style="text-align: right; font-size: 1.5rem; color: var(--primary-color);"><strong>${formatPrice(order.totals.total)}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateOrderStatusHandler() {
+            const newStatus = document.getElementById('orderStatus').value;
+            if (updateOrderStatus(orderId, newStatus)) {
+                alert('Đã cập nhật trạng thái đơn hàng!');
+                const order = getOrderById(orderId);
+                if (order) renderOrderDetail(order);
+            }
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'admin.html';
+            }
+        }
+    </script>
+</body>
+</html>
+

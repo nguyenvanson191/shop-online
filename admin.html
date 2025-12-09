@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin - Shop Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 2rem;
+        }
+        .admin-login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        .admin-login-box h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        .admin-login-box p {
+            text-align: center;
+            color: var(--gray-color);
+            margin-bottom: 2rem;
+        }
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        .login-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .default-credentials {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+        .default-credentials strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-box">
+            <h1><i class="fas fa-shield-alt"></i> Admin Panel</h1>
+            <p>Đăng nhập để quản lý cửa hàng</p>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" required placeholder="Nhập tên đăng nhập">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" required placeholder="Nhập mật khẩu">
+                </div>
+                <button type="submit" class="btn btn-primary btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </button>
+            </form>
+
+            <div class="default-credentials">
+                <strong>Thông tin đăng nhập mặc định:</strong><br>
+                Tên đăng nhập: <strong>admin</strong><br>
+                Mật khẩu: <strong>admin123</strong>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Kiểm tra đã đăng nhập chưa
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Kiểm tra thông tin đăng nhập (mặc định: admin/admin123)
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminUsername', username);
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                alert('Sai tên đăng nhập hoặc mật khẩu!');
+            }
+        });
+    </script>
+</body>
+</html>
+

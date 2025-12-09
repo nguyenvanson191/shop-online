@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Online - Cửa hàng trực tuyến</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Shop Online</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">Trang chủ</a>
+                    <a href="#products" class="nav-link">Sản phẩm</a>
+                    <a href="#about" class="nav-link">Giới thiệu</a>
+                    <a href="#contact" class="nav-link">Liên hệ</a>
+                </nav>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Chào mừng đến với Shop Online</h1>
+                <p class="hero-subtitle">Khám phá hàng ngàn sản phẩm chất lượng với giá cả hợp lý</p>
+                <a href="#products" class="btn btn-primary">Mua ngay</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <h2 class="section-title">Sản phẩm nổi bật</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">Tất cả</button>
+                <button class="filter-btn" data-category="clothing">Thời trang</button>
+                <button class="filter-btn" data-category="accessories">Phụ kiện</button>
+                <button class="filter-btn" data-category="electronics">Điện tử</button>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Sản phẩm sẽ được load bằng JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">Về chúng tôi</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Shop Online - Nơi mua sắm tin cậy của bạn</h3>
+                    <p>Chúng tôi tự hào cung cấp những sản phẩm chất lượng cao với dịch vụ khách hàng tuyệt vời. Với hơn 10 năm kinh nghiệm trong ngành bán lẻ trực tuyến, chúng tôi cam kết mang đến cho khách hàng trải nghiệm mua sắm tốt nhất.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-shipping-fast"></i>
+                            <h4>Giao hàng nhanh</h4>
+                            <p>Giao hàng toàn quốc trong 24h</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Bảo hành chính hãng</h4>
+                            <p>100% sản phẩm chính hãng</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-headset"></i>
+                            <h4>Hỗ trợ 24/7</h4>
+                            <p>Đội ngũ chăm sóc khách hàng tận tâm</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Shop Online</h3>
+                    <p>Cửa hàng trực tuyến uy tín hàng đầu Việt Nam</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên kết nhanh</h4>
+                    <ul>
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="#products">Sản phẩm</a></li>
+                        <li><a href="#about">Giới thiệu</a></li>
+                        <li><a href="cart.html">Giỏ hàng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Điều khoản sử dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên hệ</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 0836011168</li>
+                        <li><i class="fas fa-envelope"></i> datcoi2002hy@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> H2 Haven Ecopark, Hà Nội</li>
+                    </ul>
+                </div>
+            </div>  
+            <div class="footer-bottom">
+                <p>&copy; 2024 Shop Online. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

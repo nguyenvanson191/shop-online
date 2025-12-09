@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - Shop Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Shop Online</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Trang chủ</a>
+                    <a href="index.html#products" class="nav-link">Sản phẩm</a>
+                    <a href="index.html#about" class="nav-link">Giới thiệu</a>
+                    <a href="index.html#contact" class="nav-link">Liên hệ</a>
+                </nav>
+                <div class="header-actions">
+                    <a href="index.html" class="btn btn-secondary">Quay lại</a>
+                    <a href="cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="detail-container">
+                <div class="detail-image" id="productImage">
+                    <!-- Sẽ được load bằng JavaScript -->
+                </div>
+                <div class="detail-info">
+                    <div class="detail-category" id="productCategory"></div>
+                    <h1 id="productName"></h1>
+                    <div class="detail-price" id="productPrice"></div>
+                    <p class="detail-description" id="productDescription"></p>
+                    
+                    <div class="quantity-selector">
+                        <button class="quantity-btn decrease">-</button>
+                        <input type="number" class="quantity-input" value="1" min="1">
+                        <button class="quantity-btn increase">+</button>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-heart"></i> Yêu thích
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                        <h3 style="margin-bottom: 1rem;">Thông tin sản phẩm</h3>
+                        <ul style="list-style: none; line-height: 2;">
+                            <li><i class="fas fa-check" style="color: var(--success-color); margin-right: 0.5rem;"></i> Bảo hành chính hãng 12 tháng</li>
+                            <li><i class="fas fa-check" style="color: var(--success-color); margin-right: 0.5rem;"></i> Miễn phí vận chuyển toàn quốc</li>
+                            <li><i class="fas fa-check" style="color: var(--success-color); margin-right: 0.5rem;"></i> Đổi trả trong 7 ngày</li>
+                            <li><i class="fas fa-check" style="color: var(--success-color); margin-right: 0.5rem;"></i> Hỗ trợ thanh toán khi nhận hàng</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Shop Online</h3>
+                    <p>Cửa hàng trực tuyến uy tín hàng đầu Việt Nam</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên kết nhanh</h4>
+                    <ul>
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="index.html#products">Sản phẩm</a></li>
+                        <li><a href="index.html#about">Giới thiệu</a></li>
+                        <li><a href="cart.html">Giỏ hàng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Điều khoản sử dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên hệ</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 0836011168</li>
+                        <li><i class="fas fa-envelope"></i> datcoi2002hy@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận XYZ, TP.HCM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Shop Online. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

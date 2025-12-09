@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sản phẩm - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div>
+            <h1><i class="fas fa-box"></i> Quản lý Sản phẩm</h1>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="showAddProductForm()" style="margin-right: 1rem;">
+                <i class="fas fa-plus"></i> Thêm sản phẩm
+            </button>
+            <a href="index.html" class="btn btn-secondary" style="margin-right: 1rem;">
+                <i class="fas fa-home"></i> Về trang chủ
+            </a>
+            <button class="btn btn-danger" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+        <a href="admin-dashboard.html">
+            <i class="fas fa-chart-line"></i> Tổng quan
+        </a>
+        <a href="admin-orders.html">
+            <i class="fas fa-shopping-cart"></i> Đơn hàng
+        </a>
+        <a href="admin-products.html" class="active">
+            <i class="fas fa-box"></i> Sản phẩm
+        </a>
+    </nav>
+
+    <!-- Admin Content -->
+    <div class="admin-content">
+        <div class="admin-section">
+            <h2><i class="fas fa-list"></i> Danh sách sản phẩm</h2>
+            
+            <div id="productsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <!-- Sẽ được load bằng JavaScript -->
+            </div>
+
+            <div id="noProducts" class="empty-state" style="display: none;">
+                <i class="fas fa-box-open"></i>
+                <h3>Chưa có sản phẩm nào</h3>
+                <p>Nhấn "Thêm sản phẩm" để bắt đầu.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm/Sửa sản phẩm -->
+    <div id="productModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <h2 id="modalTitle">Thêm sản phẩm mới</h2>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label>Tên sản phẩm *</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label>Danh mục *</label>
+                    <select id="productCategory" required>
+                        <option value="clothing">Thời trang</option>
+                        <option value="accessories">Phụ kiện</option>
+                        <option value="electronics">Điện tử</option>
+                        <option value="books">Sách</option>
+                        <option value="home">Đồ gia dụng</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Giá *</label>
+                        <input type="number" id="productPrice" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Giá gốc (nếu có khuyến mãi)</label>
+                        <input type="number" id="productOriginalPrice" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả *</label>
+                    <textarea id="productDescription" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Đường dẫn ảnh</label>
+                    <input type="text" id="productImageUrl" placeholder="images/products/product.jpg">
+                    <small style="color: var(--gray-color);">Ví dụ: images/products/cardigan-navy.jpg</small>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()" style="flex: 1;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+    <script src="script.js"></script>
+    <script>
+        if (!checkAdminLogin()) return;
+
+        // Load sản phẩm
+        function loadProducts() {
+            const productsList = document.getElementById('productsList');
+            const noProducts = document.getElementById('noProducts');
+            
+            // Lấy sản phẩm từ script.js
+            const allProducts = products;
+            
+            if (allProducts.length === 0) {
+                productsList.style.display = 'none';
+                noProducts.style.display = 'block';
+                return;
+            }
+
+            noProducts.style.display = 'none';
+            productsList.style.display = 'grid';
+            productsList.innerHTML = allProducts.map((product, index) => `
+                <div style="background: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; box-shadow: var(--shadow);">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem; overflow: hidden;">
+                        ${product.imageUrl ? `<img src="${product.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='${product.image}';">` : product.image}
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">${product.name}</h3>
+                    <p style="color: var(--gray-color); font-size: 0.875rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${product.description}</p>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary-color);">${formatPrice(product.price)}</div>
+                        ${product.originalPrice ? `<div style="font-size: 0.875rem; color: var(--gray-color); text-decoration: line-through;">${formatPrice(product.originalPrice)}</div>` : ''}
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-action btn-edit" onclick="editProduct(${index})" style="flex: 1;">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteProduct(${index})" style="flex: 1;">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Hiển thị form thêm sản phẩm
+        function showAddProductForm() {
+            document.getElementById('modalTitle').textContent = 'Thêm sản phẩm mới';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        // Sửa sản phẩm
+        function editProduct(index) {
+            const product = products[index];
+            document.getElementById('modalTitle').textContent = 'Sửa sản phẩm';
+            document.getElementById('productId').value = index;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productOriginalPrice').value = product.originalPrice || '';
+            document.getElementById('productDescription').value = product.description;
+            document.getElementById('productImageUrl').value = product.imageUrl || '';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        // Lưu sản phẩm
+        function saveProduct(e) {
+            e.preventDefault();
+            const index = document.getElementById('productId').value;
+            const productData = {
+                id: index ? products[index].id : products.length + 1,
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                originalPrice: document.getElementById('productOriginalPrice').value ? parseInt(document.getElementById('productOriginalPrice').value) : null,
+                description: document.getElementById('productDescription').value,
+                image: '📦',
+                imageUrl: document.getElementById('productImageUrl').value || null
+            };
+
+            if (index) {
+                // Sửa sản phẩm
+                products[index] = { ...products[index], ...productData };
+            } else {
+                // Thêm sản phẩm mới
+                products.push(productData);
+            }
+
+            // Lưu vào localStorage
+            localStorage.setItem('products', JSON.stringify(products));
+            closeProductModal();
+            loadProducts();
+            alert('Đã lưu sản phẩm!');
+        }
+
+        // Xóa sản phẩm
+        function deleteProduct(index) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                products.splice(index, 1);
+                localStorage.setItem('products', JSON.stringify(products));
+                loadProducts();
+                alert('Đã xóa sản phẩm!');
+            }
+        }
+
+        // Đóng modal
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Đăng xuất
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Load sản phẩm từ localStorage nếu có
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedProducts = localStorage.getItem('products');
+            if (savedProducts) {
+                try {
+                    const parsed = JSON.parse(savedProducts);
+                    products.length = 0;
+                    products.push(...parsed);
+                } catch(e) {
+                    console.error('Error loading products:', e);
+                }
+            }
+            loadProducts();
+        });
+    </script>
+</body>
+</html>
+
